@@ -12,6 +12,17 @@ python3 -m http.server 4173
 
 Then open `http://127.0.0.1:4173`.
 
+## Deploy on Vercel
+
+This repo is ready to deploy as a static site.
+
+- Import the GitHub repo into Vercel
+- Keep the root directory as the repository root
+- Framework Preset should be `Other`
+- No build command is needed
+
+The included [`vercel.json`](/Users/brandon/Developer/eggman/vercel.json) makes the project explicitly use the `Other` framework preset.
+
 ## Included
 
 - Drag an egg from the basket into the mouth.
