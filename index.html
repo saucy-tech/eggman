@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Feed Eggs</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="desktop-shell">
+      <section class="app-window" aria-label="Feed Eggs game window">
+        <header class="window-top">
+          <div class="window-spacer" aria-hidden="true"></div>
+          <h1 class="window-title">FEED EGGS</h1>
+          <div class="window-actions">
+            <button id="sound-toggle" class="system-button" type="button">SOUND ON</button>
+            <button id="reset-button" class="system-button" type="button">RESET</button>
+          </div>
+        </header>
+
+        <section class="playfield" id="playfield" aria-live="polite">
+          <div class="hud-panel">
+            <p class="hud-label" id="fed-display">EGGS FED: 0</p>
+            <p class="hud-label" id="supply-display">BASKET: 12</p>
+          </div>
+
+          <div class="quote-box" id="quote-box" hidden>
+            <p id="quote-text"></p>
+          </div>
+
+          <div class="transition-banner" id="transition-banner" hidden>
+            <p id="transition-banner-text">SYSTEM MESSAGE</p>
+          </div>
+
+          <div class="target-zone" id="target-zone" aria-label="Egg mouth target">
+            <div class="target-art" id="target-art"></div>
+            <div class="mouth-hitbox" id="mouth-hitbox" aria-hidden="true"></div>
+          </div>
+
+          <button class="basket-zone" id="basket-zone" type="button" aria-label="Pick up an egg from the basket">
+            <div class="basket-art" id="basket-art"></div>
+            <p class="basket-count" id="basket-count">12 EGGS</p>
+          </button>
+
+          <div class="drag-layer" id="drag-layer" aria-hidden="true"></div>
+
+          <section class="prompt-overlay" id="prompt-overlay" hidden aria-modal="true" role="dialog">
+            <form class="prompt-card" id="prompt-form">
+              <p class="prompt-text">
+                Dude, you ran out of eggs. Would you like to buy an 80 pack of eggs?
+              </p>
+              <label class="prompt-label" for="prompt-input">TYPE RESPONSE</label>
+              <input
+                id="prompt-input"
+                class="prompt-input"
+                name="promptInput"
+                type="text"
+                autocomplete="off"
+                spellcheck="false"
+              />
+              <button class="system-button prompt-submit" type="submit">ENTER</button>
+            </form>
+          </section>
+
+          <section class="reward-overlay" id="reward-overlay" hidden aria-modal="true" role="dialog">
+            <div class="reward-card">
+              <div class="reward-art" id="reward-art"></div>
+              <div class="reward-copy">
+                <p class="reward-line" id="reward-line">Congrats, big boy.</p>
+                <div class="reward-actions">
+                  <button class="system-button" id="reward-main-button" type="button">LOOK AT PRIZE</button>
+                  <button class="system-button" id="reward-rotate-button" type="button" hidden>ROTATE EGG</button>
+                  <button class="system-button" id="reward-reset-button" type="button" hidden>PLAY AGAIN</button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <footer class="status-bar">
+          <p class="status-line" id="status-line">Drag eggs into mouth.</p>
+        </footer>
+      </section>
+    </main>
+
+    <script src="./game.js"></script>
+  </body>
+</html>
