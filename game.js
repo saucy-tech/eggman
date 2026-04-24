@@ -57,7 +57,13 @@ const state = {
   lastPointerTickAt: 0,
   lastPointerX: null,
   lastPointerY: null,
-  dragSoundTimer: null
+  dragSoundTimer: null,
+  targetMotionFrame: null,
+  targetX: 0.12,
+  targetY: 0.75,
+  targetVX: 0.18,
+  targetVY: -0.1,
+  targetLastFrameAt: 0
 };
 
 const elements = {
@@ -92,9 +98,11 @@ function init() {
   elements.targetArt.innerHTML = targetEggSvg();
   elements.basketArt.innerHTML = basketSvg();
   setRewardArt("", "");
+  applyTargetPosition();
   updateHud();
   updateBasketState();
   bindEvents();
+  startTargetMotion();
 }
 
 function bindEvents() {
@@ -246,6 +254,7 @@ function resetGame() {
   state.lastPointerTickAt = 0;
   state.lastPointerX = null;
   state.lastPointerY = null;
+  resetTargetMotion();
   updateHud();
   updateBasketState();
   elements.playfield.classList.remove("is-winning");
@@ -339,6 +348,7 @@ function pulseTarget() {
   elements.targetZone.classList.remove("is-fed");
   void elements.targetZone.offsetWidth;
   elements.targetZone.classList.add("is-fed");
+  scrambleTargetMotion();
 }
 
 function updateHud() {
@@ -456,6 +466,91 @@ function positionDrag(x, y) {
 function hitMouth(x, y) {
   const rect = document.querySelector("#mouth-hitbox").getBoundingClientRect();
   return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+}
+
+function resetTargetMotion() {
+  state.targetX = 0.12;
+  state.targetY = 0.75;
+  state.targetVX = 0.18;
+  state.targetVY = -0.1;
+  state.targetLastFrameAt = 0;
+  applyTargetPosition();
+}
+
+function startTargetMotion() {
+  if (state.targetMotionFrame) {
+    return;
+  }
+
+  state.targetLastFrameAt = performance.now();
+
+  const tick = (now) => {
+    const elapsed = Math.min((now - state.targetLastFrameAt) / 1000, 0.05);
+    state.targetLastFrameAt = now;
+    moveTarget(elapsed, now);
+    state.targetMotionFrame = window.requestAnimationFrame(tick);
+  };
+
+  state.targetMotionFrame = window.requestAnimationFrame(tick);
+}
+
+function moveTarget(elapsed, now) {
+  if (state.rewardStage !== "hidden" || !elements.promptOverlay.hidden) {
+    return;
+  }
+
+  const playfieldRect = elements.playfield.getBoundingClientRect();
+  const targetRect = elements.targetZone.getBoundingClientRect();
+  const widthRatio = targetRect.width / playfieldRect.width;
+  const heightRatio = targetRect.height / playfieldRect.height;
+  const minX = 0.03;
+  const maxX = Math.max(minX, 0.58 - widthRatio * 0.15);
+  const minY = 0.35;
+  const maxY = Math.max(minY, 0.92 - heightRatio * 0.25);
+  const progress = Math.max(state.fed, state.scriptIndex * 2);
+  const speedBoost = 1 + Math.min(progress, 18) * 0.045 + (state.phase === "after-pack" ? 0.28 : 0);
+  const wobbleX = Math.sin(now / 430) * 0.07 * speedBoost;
+  const wobbleY = Math.cos(now / 570) * 0.05 * speedBoost;
+
+  state.targetX += (state.targetVX * speedBoost + wobbleX) * elapsed;
+  state.targetY += (state.targetVY * speedBoost + wobbleY) * elapsed;
+
+  if (state.dragNode) {
+    const mouthRect = document.querySelector("#mouth-hitbox").getBoundingClientRect();
+    const eggRect = state.dragNode.getBoundingClientRect();
+    const dx = (mouthRect.left + mouthRect.width / 2) - (eggRect.left + eggRect.width / 2);
+    const dy = (mouthRect.top + mouthRect.height / 2) - (eggRect.top + eggRect.height / 2);
+    const distance = Math.max(Math.hypot(dx, dy), 1);
+
+    if (distance < 190) {
+      state.targetX -= (dx / distance) * 0.18 * elapsed;
+      state.targetY -= (dy / distance) * 0.12 * elapsed;
+    }
+  }
+
+  if (state.targetX < minX || state.targetX > maxX) {
+    state.targetVX *= -1;
+    state.targetX = Math.min(Math.max(state.targetX, minX), maxX);
+  }
+
+  if (state.targetY < minY || state.targetY > maxY) {
+    state.targetVY *= -1;
+    state.targetY = Math.min(Math.max(state.targetY, minY), maxY);
+  }
+
+  applyTargetPosition();
+}
+
+function applyTargetPosition() {
+  elements.targetZone.style.left = `${state.targetX * 100}%`;
+  elements.targetZone.style.top = `${state.targetY * 100}%`;
+  elements.targetZone.style.bottom = "auto";
+}
+
+function scrambleTargetMotion() {
+  const direction = state.scriptIndex % 2 === 0 ? 1 : -1;
+  state.targetVX = direction * (0.2 + Math.min(state.scriptIndex, 5) * 0.035);
+  state.targetVY = -direction * (0.12 + Math.min(state.scriptIndex, 5) * 0.025);
 }
 
 function ensureAudioContext() {
