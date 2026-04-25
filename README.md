@@ -1,27 +1,46 @@
 # Feed Eggs
 
-Small browser rebuild of the "Feed Eggs" office-computer game vibe, based on the references in [`images/`](/Users/brandon/Developer/eggman/images).
+Small browser rebuild of the "Feed Eggs" office-computer game vibe, based on references in `images/`.
 
-## Run it
+## Project layout
 
-Open [`index.html`](/Users/brandon/Developer/eggman/index.html) directly in a browser, or serve the folder locally:
+- `index.html` - game shell and UI structure
+- `styles.css` - visual styling and animations
+- `game.js` - game state, interactions, and audio logic
+- `audio/` - optional voice-over files (not required)
+- `images/` - reference assets (optional)
+- `vercel.json` - static-site deploy settings for Vercel
+- `docs/qa-checklist.md` - manual smoke-test checklist
+- `docs/release-checklist.md` - pre/post merge release checks
+
+## Run locally
+
+Open `index.html` directly in a browser, or run a local server.
+
+### Option 1: Python
 
 ```sh
 python3 -m http.server 4173
 ```
 
+### Option 2: npm script
+
+```sh
+npm run dev
+```
+
 Then open `http://127.0.0.1:4173`.
 
-## Deploy on Vercel
+## Controls
 
-This repo is ready to deploy as a static site.
+- Click the basket to spawn eggs.
+- Drag an egg to the mouth to feed it.
+- Use `RESET` to restart the run.
+- Use `SOUND ON/OFF` to mute or unmute effects.
 
-- Import the GitHub repo into Vercel
-- Keep the root directory as the repository root
-- Framework Preset should be `Other`
-- No build command is needed
+## Known behavior
 
-The included [`vercel.json`](/Users/brandon/Developer/eggman/vercel.json) makes the project explicitly use the `Other` framework preset.
+Egg math and counts are intentionally scripted and absurd. The mismatch is part of the game vibe, not a scoring bug.
 
 ## Included
 
@@ -34,7 +53,7 @@ The included [`vercel.json`](/Users/brandon/Developer/eggman/vercel.json) makes 
 
 ## Optional voice-over files
 
-Drop any of these files into `/Users/brandon/Developer/eggman/audio/` if you want your own recorded lines:
+Drop any of these files into `audio/` to replace synth fallback tones:
 
 - `what-six.mp3`
 - `that-one-egg-was-40-eggs.mp3`
@@ -42,4 +61,20 @@ Drop any of these files into `/Users/brandon/Developer/eggman/audio/` if you wan
 - `bush-what-the-hell.mp3`
 - `nude-egg-i-won.mp3`
 
-If a file is missing, the game falls back to simple synth tones.
+If a file is missing, the game automatically falls back to generated synth tones.
+
+## Troubleshooting
+
+- Audio may not play until the first user interaction (click/drag), due to browser autoplay rules.
+- If `audio/*.mp3` files are missing, the game falls back to synthesized tones.
+
+## Deploy on Vercel
+
+This repo deploys as a static site.
+
+- Import the repo into Vercel
+- Keep root directory as repository root
+- Set Framework Preset to `Other`
+- No build command needed
+
+`vercel.json` sets the framework value to `null`, matching Vercel's `Other` preset.
