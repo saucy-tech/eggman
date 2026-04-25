@@ -7,7 +7,7 @@ const BEST_SCORE_KEY = "feed-eggs-best-score";
 const state = {
   score: 0, best: 0, streak: 0, hits: 0, level: 1, soundOn: true, audioCtx: null,
   aiming: false, aimPullX: 0, aimPullY: 0, projectile: null, targetTime: 0, frame: null, lastTs: 0, medalTimer: null,
-  lastHitAt: 0
+  lastHitAt: 0, targetX: null, targetY: null
 };
 
 const el = {
@@ -16,6 +16,7 @@ const el = {
   targetArt: document.querySelector("#target-art"),
   mouth: document.querySelector("#mouth-hitbox"),
   launcher: document.querySelector("#launcher-zone"),
+  launcherFrame: document.querySelector("#launcher-frame"),
   launcherEgg: document.querySelector("#launcher-egg"),
   trajectoryOverlay: document.querySelector("#trajectory-overlay"),
   trajectoryLine: document.querySelector("#trajectory-line"),
@@ -34,6 +35,7 @@ function init() {
   if (!el.playfield || !el.launcher || !el.targetZone) return;
   loadBestScore();
   el.targetArt.innerHTML = targetEggSvg();
+  el.launcherFrame.innerHTML = slingSvg();
   el.launcherEgg.innerHTML = looseEggSvg();
   bindEvents();
   resetGame();
@@ -126,25 +128,37 @@ function startLoop() {
 function moveTarget(dt) {
   const field = el.playfield.getBoundingClientRect();
   const mouth = el.targetZone.getBoundingClientRect();
-  const minX = 0.05;
+  const launcher = el.launcher.getBoundingClientRect();
+  const launcherGapPx = 90;
+  const minX = Math.max(0.05, (launcher.right - field.left + launcherGapPx) / field.width);
   const maxX = Math.max(minX, 0.64 - mouth.width / field.width);
   const minY = 0.34;
   const maxY = Math.max(minY, 0.9 - mouth.height / field.height);
-  let x = 0.16, y = 0.72;
+  let x = 0.22;
+  let y = 0.7;
 
   if (state.level <= 2) {
-    x += Math.sin(state.targetTime * 0.6) * 0.02 * (state.level - 1);
+    x += Math.sin(state.targetTime * 0.55) * 0.015 * (state.level - 1);
   } else if (state.level <= 5) {
-    x = 0.18 + Math.sin(state.targetTime * (0.8 + state.level * 0.15)) * 0.1;
-    y = 0.66 + Math.cos(state.targetTime * (0.6 + state.level * 0.1)) * 0.05;
+    x = 0.27 + Math.sin(state.targetTime * (0.78 + state.level * 0.11)) * 0.08;
+    y = 0.66 + Math.cos(state.targetTime * (0.56 + state.level * 0.08)) * 0.04;
   } else {
-    x = 0.22 + Math.sin(state.targetTime * (1.1 + state.level * 0.18)) * 0.2;
-    y = 0.62 + Math.sin(state.targetTime * (0.9 + state.level * 0.15)) * 0.14;
+    x = 0.3 + Math.sin(state.targetTime * (0.94 + state.level * 0.13)) * 0.14;
+    y = 0.62 + Math.sin(state.targetTime * (0.78 + state.level * 0.1)) * 0.09;
   }
   x = clamp(x, minX, maxX);
   y = clamp(y, minY, maxY);
-  el.targetZone.style.left = `${x * 100}%`;
-  el.targetZone.style.top = `${y * 100}%`;
+
+  if (state.targetX === null || state.targetY === null) {
+    state.targetX = x;
+    state.targetY = y;
+  }
+  const alpha = clamp(dt * 7.5, 0.08, 0.24);
+  state.targetX += (x - state.targetX) * alpha;
+  state.targetY += (y - state.targetY) * alpha;
+
+  el.targetZone.style.left = `${state.targetX * 100}%`;
+  el.targetZone.style.top = `${state.targetY * 100}%`;
   el.targetZone.style.bottom = "auto";
 }
 
@@ -265,6 +279,8 @@ function resetGame() {
   clearTrajectory();
   state.score = 0; state.streak = 0; state.hits = 0; state.level = 1;
   state.lastHitAt = 0;
+  state.targetX = null;
+  state.targetY = null;
   el.medalBanner.hidden = true;
   updateHud();
   setStatus("Pull from launcher, then release to fling.");
@@ -370,5 +386,8 @@ function beep(f1, f2) {
 function clamp(v, min, max) { return Math.min(Math.max(v, min), max); }
 function targetEggSvg() { return `<svg viewBox="0 0 210 240" aria-hidden="true"><g fill="none" stroke="#111" stroke-width="3.3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="104" cy="214" rx="48" ry="8" fill="rgba(17,17,17,0.08)" stroke="none"/><ellipse cx="104" cy="98" rx="60" ry="78" fill="#fff"/><circle cx="81" cy="69" r="10" fill="#fff"/><circle cx="127" cy="69" r="10" fill="#fff"/><circle cx="81" cy="69" r="3" fill="#111" stroke="none"/><circle cx="127" cy="69" r="3" fill="#111" stroke="none"/><circle class="mouth-ring" cx="104" cy="124" r="36" fill="#111" stroke="none"/></g></svg>`; }
 function looseEggSvg() { return `<svg viewBox="0 0 50 64" aria-hidden="true"><ellipse cx="25" cy="30" rx="18" ry="24" fill="#fff" stroke="#111" stroke-width="2.6"/></svg>`; }
+function slingSvg() {
+  return `<svg viewBox="0 0 160 200" aria-hidden="true"><g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M28 180 C38 132, 42 88, 46 28" stroke="#5a3f1a" stroke-width="13"/><path d="M132 180 C122 132, 118 88, 114 28" stroke="#5a3f1a" stroke-width="13"/><path d="M52 44 C74 56, 86 56, 108 44" stroke="#b88b4b" stroke-width="10"/><path d="M52 44 C74 32, 86 32, 108 44" stroke="#8f6734" stroke-width="6"/><path d="M80 52 L80 184" stroke="#3f2a10" stroke-width="6" opacity="0.42"/></g></svg>`;
+}
 
 init();

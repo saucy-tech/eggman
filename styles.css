@@ -410,50 +410,36 @@ input {
 
 #launcher-zone {
   position: absolute;
-  left: 8%;
+  left: 6%;
   bottom: 11%;
   z-index: 4;
   display: grid;
   place-items: center;
-  width: min(18vw, 152px);
-  min-width: 108px;
+  width: min(21vw, 178px);
+  min-width: 124px;
   aspect-ratio: 4 / 5;
-  padding: 12px 10px;
-  border: 2px solid var(--ink);
-  background:
-    linear-gradient(180deg, rgba(242, 242, 242, 0.9) 0%, rgba(221, 221, 221, 0.94) 100%);
-  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.11);
-  border-radius: 7px;
+  padding: 8px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
 }
 
-#launcher-zone::before {
-  content: "";
+#launcher-frame {
   position: absolute;
-  left: 22%;
-  top: 14%;
-  bottom: 16%;
-  width: 3px;
-  border-radius: 2px;
-  background: #715325;
-  box-shadow: 11px 0 0 #6a481a;
+  inset: 0;
+  z-index: 1;
+  filter: drop-shadow(0 5px 0 rgba(0, 0, 0, 0.2));
 }
 
-#launcher-zone::after {
-  content: "";
-  position: absolute;
-  right: 18%;
-  top: 18%;
-  bottom: 26%;
-  width: 8px;
-  border-radius: 999px;
-  background: #8f6832;
-  box-shadow:
-    -1px 0 0 #4d3311,
-    1px 0 0 #f0d5a7;
+#launcher-frame svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 #launcher-zone.is-armed {
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.45), 6px 6px 0 rgba(0, 0, 0, 0.11);
+  filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0)) brightness(1.05);
 }
 
 #launcher-zone.is-firing {
@@ -462,9 +448,10 @@ input {
 
 #launcher-egg {
   position: absolute;
-  right: 13%;
-  bottom: 24%;
-  width: min(6vw, 52px);
+  right: 25%;
+  bottom: 58%;
+  z-index: 3;
+  width: min(6.3vw, 54px);
   min-width: 36px;
   transform-origin: center;
   transition: transform 120ms ease-out;
@@ -865,10 +852,10 @@ input {
   }
 
   #launcher-zone {
-    left: 2.5%;
+    left: 1.5%;
     bottom: 14%;
-    width: min(23vw, 124px);
-    min-width: 92px;
+    width: min(28vw, 144px);
+    min-width: 104px;
   }
 
   #launcher-egg {
