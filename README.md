@@ -1,80 +1,45 @@
 # Feed Eggs
 
-Small browser rebuild of the "Feed Eggs" office-computer game vibe, based on references in `images/`.
+Browser arcade game where you fling eggs from a slingshot into a moving egg-mouth target. Vanilla JS, no build step, no framework.
 
 ## Project layout
 
-- `index.html` - game shell and UI structure
-- `styles.css` - visual styling and animations
-- `game.js` - game state, interactions, and audio logic
-- `audio/` - optional voice-over files (not required)
-- `images/` - reference assets (optional)
-- `vercel.json` - static-site deploy settings for Vercel
-- `docs/qa-checklist.md` - manual smoke-test checklist
-- `docs/release-checklist.md` - pre/post merge release checks
+- `index.html` — game shell, HUD, launcher and target zones
+- `game.js` — physics, aim/launch loop, scoring, streaks, levels
+- `styles.css` — visuals and animations
+- `vercel.json` — static-site deploy config (`framework: null`)
+- `audio/` — empty by default; reserved for optional sound assets
+- `images/` — reference art
+- `docs/qa-checklist.md` — manual smoke-test checklist
+- `docs/release-checklist.md` — pre/post-merge release checks
 
 ## Run locally
-
-Open `index.html` directly in a browser, or run a local server.
-
-### Option 1: Python
-
-```sh
-python3 -m http.server 4173
-```
-
-### Option 2: npm script
 
 ```sh
 npm run dev
 ```
 
-Then open `http://127.0.0.1:4173`.
+That runs `python3 -m http.server 4173`. Open `http://127.0.0.1:4173`.
 
-## Controls
+You can also just open `index.html` directly in a browser.
 
-- Click the basket to spawn eggs.
-- Drag an egg to the mouth to feed it.
-- Use `RESET` to restart the run.
-- Use `SOUND ON/OFF` to mute or unmute effects.
+## How to play
 
-## Known behavior
+- Press and drag from the slingshot on the left side of the playfield, then release to fling an egg.
+- A dotted trajectory previews your shot while you aim.
+- Hit the egg-mouth target on the right to score. The target moves more aggressively as your level rises.
+- Consecutive hits build a streak (2.5x cap). Misses reset the streak. Streaks decay after ~4.5s of inactivity.
+- Streak medals trigger at 3, 5, 8, and 12; majors flash the playfield and burst particles.
+- Level increases every 4 hits.
+- `RESET` restarts the run. `SOUND ON/OFF` toggles audio.
+- Best score persists in `localStorage` under `feed-eggs-best-score`.
 
-Egg math and counts are intentionally scripted and absurd. The mismatch is part of the game vibe, not a scoring bug.
+## Deploy
 
-## Included
+Static site on Vercel. Push to `main` and Vercel auto-deploys. Framework preset is `Other`; no build command.
 
-- Drag an egg from the basket into the mouth.
-- Deliberately broken egg math.
-- Weird text-input purchase prompt.
-- Abrupt reward sequence with front/back nude-egg states.
-- Synthesized retro beeps.
-- Optional voice-over hooks.
+## Notes
 
-## Optional voice-over files
-
-Drop any of these files into `audio/` to replace synth fallback tones:
-
-- `what-six.mp3`
-- `that-one-egg-was-40-eggs.mp3`
-- `never-gotten-here-before.mp3`
-- `bush-what-the-hell.mp3`
-- `nude-egg-i-won.mp3`
-
-If a file is missing, the game automatically falls back to generated synth tones.
-
-## Troubleshooting
-
-- Audio may not play until the first user interaction (click/drag), due to browser autoplay rules.
-- If `audio/*.mp3` files are missing, the game falls back to synthesized tones.
-
-## Deploy on Vercel
-
-This repo deploys as a static site.
-
-- Import the repo into Vercel
-- Keep root directory as repository root
-- Set Framework Preset to `Other`
-- No build command needed
-
-`vercel.json` sets the framework value to `null`, matching Vercel's `Other` preset.
+- Audio is synthesized via WebAudio (`triangle` oscillator beeps). No mp3 assets are required.
+- Audio won't start until the first user interaction due to browser autoplay rules.
+- Tuning constants live at the top of `game.js` in `PHYSICS` and `STREAK_MEDALS`.
