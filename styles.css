@@ -798,6 +798,104 @@ input {
   }
 }
 
+#launcher-egg.is-golden,
+.drag-egg.is-golden {
+  filter: drop-shadow(0 0 7px rgba(255, 196, 36, 0.95));
+  animation: golden-glow 800ms ease-in-out infinite alternate;
+}
+
+.score-pop {
+  position: absolute;
+  z-index: 9;
+  transform: translate(-50%, -100%);
+  font-weight: 700;
+  font-size: clamp(0.9rem, 2vw, 1.2rem);
+  color: var(--ink);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+  pointer-events: none;
+  animation: score-pop-rise 850ms ease-out 1 forwards;
+}
+
+.score-pop.is-golden {
+  color: #8a6d1a;
+  text-shadow: 0 0 6px rgba(255, 211, 77, 0.9);
+}
+
+.egg-splat {
+  position: absolute;
+  z-index: 7;
+  width: 64px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: splat-fade 1.3s ease-out 1 forwards;
+}
+
+.egg-splat svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.rain-egg {
+  position: absolute;
+  top: -48px;
+  z-index: 10;
+  width: 40px;
+  transform: translate(-50%, 0);
+  pointer-events: none;
+  animation: rain-fall var(--fall-ms, 1600ms) linear 1 forwards;
+}
+
+.rain-egg svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@keyframes golden-glow {
+  from {
+    filter: drop-shadow(0 0 4px rgba(255, 196, 36, 0.7));
+  }
+  to {
+    filter: drop-shadow(0 0 11px rgba(255, 196, 36, 1));
+  }
+}
+
+@keyframes score-pop-rise {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -100%) scale(0.7);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, calc(-100% - 36px)) scale(1.12);
+  }
+}
+
+@keyframes splat-fade {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.55);
+  }
+  22% {
+    transform: translate(-50%, -50%) scale(1.06);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes rain-fall {
+  to {
+    top: 104%;
+    transform: translate(-50%, 0) rotate(calc(var(--spin, 1) * 720deg));
+  }
+}
+
 @media (max-width: 760px) {
   body {
     padding: 10px;
@@ -866,4 +964,17 @@ input {
     top: 24%;
     width: min(82%, 340px);
   }
+}
+
+.aim-dot {
+  position: absolute;
+  z-index: 6;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(17, 17, 17, 0.4);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition: opacity 80ms linear;
 }

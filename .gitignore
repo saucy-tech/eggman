@@ -3,3 +3,5 @@
 .superpowers/
 CLAUDE.md
 AGENTS.md
+.wrangler/
+.claude/

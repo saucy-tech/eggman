@@ -1,0 +1,11 @@
+.git
+.wrangler
+.claude
+.gitignore
+.assetsignore
+docs
+images
+audio
+README.md
+package.json
+wrangler.jsonc
