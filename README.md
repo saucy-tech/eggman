@@ -28,7 +28,7 @@ You can also just open `index.html` directly in a browser.
 - Press the slingshot, pull down and back (Angry Birds style), release to fling an egg.
 - A dotted arc of fading dots previews your shot while you aim.
 - Hit the egg-mouth target on the right to score. The target moves more aggressively as your level rises.
-- Consecutive hits build a streak (2.5x cap). Misses reset the streak. Streaks decay after ~4.5s of inactivity.
+- Consecutive hits build a streak. Each hit past the first adds 0.25x, capped at 4x. Misses reset the streak. Streaks decay after 4.5s of inactivity.
 - Streak medals trigger at 3, 5, 8, and 12; majors flash the playfield and burst particles.
 - A golden egg loads ~10% of the time — worth 5x points. Don't waste it.
 - Misses splat on the floor and the announcer roasts you, harder with each consecutive miss.
